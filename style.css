@@ -1,0 +1,164 @@
+body{
+  min-width: 1080px;
+  font-size: 14px;
+  font-family: 'PT Sans', sans-serif;
+  background-color: white;
+  color: black;
+  margin: 0;
+  padding: 0;
+}
+
+.main-header, .main-footer{
+    padding: 20px;
+    background-color: white;
+    color: black;
+}
+
+.main-header{
+    font-size: 16px;
+    text-transform: uppercase;
+    font-weight: bold;
+    /*background-color: rgba(255,255,160,0.5);*/
+}
+
+.main-footer{
+    padding: 10px 20px;
+    font-size: 12px;
+    text-align: right;
+}
+
+.main{
+    position: relative;
+}
+
+.task, .matrixarea, .codearea, .grapharea{
+    background-color: white;
+    color: black;
+    min-height: 290px;
+    outline: 1px solid black;
+}
+
+.task, .codearea{
+    float:left;
+    width: 50%;
+}
+
+.matrixarea, .grapharea{
+    float:right;
+    width: 50%;
+}
+
+.matrixarea::after, .grapharea::after, .main::after{
+    content: "";
+    display: table;
+    clear: both;
+}
+
+.task .instruction{
+    margin:20px;
+}
+
+.task .instruction p{
+    margin:0;
+}
+
+.task .taskmatrix{
+    padding: 10px 30px;
+}
+
+.task .taskmatrix table{
+    border-collapse: collapse;
+}
+
+.task .taskmatrix table td{
+    border: 1px solid black;
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.task .taskmatrix table tr:last-child td:not(:last-child){
+    background-color:#FFFFF0;
+}
+
+.task .taskmatrix table tr:not(:last-child) td:last-child{
+    background-color:#FFFFF0;
+}
+
+.task .taskmatrix table tr:last-child td:last-child{
+    border:none;
+}
+
+.matrixarea p{
+    margin: 20px;
+}
+
+.matrixarea table{
+    margin: 0 50px;
+    margin-top: 40px;
+    border-collapse: collapse;
+}
+
+.matrixarea table td{
+    border: 1px solid black;
+    width: 40px;
+    height: 40px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.codearea{
+    position: relative;
+}
+
+.codearea p{
+    margin: 20px;
+}
+
+#editor {
+    position: absolute;
+    top: 60px;
+    left: 20px;
+    width:80%;
+    height:180px;
+    color: black;
+}
+
+.codearea .codebuttons{
+    position: absolute;
+    bottom:15px;
+    right:40px;
+    width: 100%;
+    height: 30px;
+    text-align: right;
+}
+
+.grapharea p{
+    margin: 20px;
+}
+
+img{
+    width: 200px;
+    margin-left: 50px;
+}
+
+button{
+    border: none;
+    padding: 10px;
+    background-color: #FFFFA0;
+    cursor: pointer;
+}
+
+button.nexttask{
+    position:absolute;
+    width: 80px;
+    bottom: 5px;
+    right: 20px;
+    background-color: #FFFF50;
+    opacity: 0.8;
+}
+
+button.nexttask:hover{
+    opacity: 1.0;
+}
