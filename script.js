@@ -2,24 +2,12 @@ var task = 0;
 var consumer = 0;
 var storage = 0;
 var storage_sum = 0;
+var resources = 0;
+
 get_start_values();
 
-var real_min_sum = {
-	"matrix":[[0,0,5,0,15],[0,0,0,10,0],[0,0,10,0,0],[10,15,5,0,0]],
-	"sum":160
-};
-
-var real_north_west = {
-	"matrix":[[10,10,0,0,0],[0,5,5,0,0],[0,0,10,0,0],[0,0,5,10,15]],
-	"sum":305
-};
-
-var real_potential = {
-	"matrix":[[10,10,0,0,0],[0,5,0,5,0],[0,0,10,0,0],[0,0,10,5,15]],
-	"sum":270
-};
-
 var result_min_sum = get_desicion_min_sum(task, consumer, storage, storage_sum);
+
 get_start_values();
 var result_north_west = get_desicion_north_west(task, consumer, storage, storage_sum);
 
@@ -38,6 +26,24 @@ get_start_values();
 var result_potential = change_route(task, matrix_potentials, result_north_west);
 // check_desicion(real_potential, result_potential);
 
+//Читает JSON-файл с данными для заданий и парсит. Возвращает JSON-объект
+function get_resources() {
+  getJSON = loadJSON('resources.json');
+  resources = JSON.parse(getJSON);
+  return resources;
+}
+
+function execute_ace(){
+	document.write("<script>"+editor.getValue()+"</script>");
+}
+
+//Возвращает номер задания из адресной строки
+function get_task_number() {
+  index = window.location.hash;
+  return parseInt(index.replace('#',''));
+}
+
+//Находит ячейку с наибольшей разницей между стоимостью перевозки и потенциалом и меняет маршрут для уменьшения суммы. Возвращает JSON с полями matrix и sum
 function change_route(task,matrix_potentials, result_north_west){
 	var route = result_north_west.route;
 	var max_dif = 0;
@@ -302,9 +308,9 @@ function get_desicion_min_sum(task, consumer, storage, storage_sum){
 //Возвращает исходные данные (пока так)
 function get_start_values(){
 
-	task = [[5,4,8,7,3],[4,8,7,1,2],[6,4,1,9,3],[1,2,3,4,5]];
-	consumer = [20,10,10,30];
-	storage = [10,15,20,10,15];
-	storage_sum = 70;
+	task = [[3,1,4,3,7],[1,2,6,8,3],[9,1,6,4,5],[2,4,2,1,5]];
+	consumer = [60,15,20,30];
+	storage = [15,40,10,15,45];
+	storage_sum = 125;
 
 }
