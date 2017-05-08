@@ -74,33 +74,33 @@ var resources = {
     "tasks":[
         {
             "task_text":"Решите транспортную задачу методом наименьшей стоимости",
-            "ace":"a = [[0, 0, 0, 0, 0],[0, 0, 0, 0, 0],[0, 0, 0, 0, 0],[0, 0, 0, 0, 0]];",
+            "ace":"abc = [[0, 0, 0, 0, 0],[0, 0, 0, 0, 0],[0, 0, 0, 0, 0],[0, 0, 0, 0, 0]];",
             "desicion_area":"",
             "popup_text":"ewsfd"
         },
         {
             "task_text":"Решите транспортную задачу методом северо-западного угла",
-            "ace":"",
+            "ace":"tergdf",
             "desicion_area":"",
-            "popup_text":""
+            "popup_text":"ergdf"
         },
         {
             "task_text":"Рассчитайте потенциалы для строк и столбцов",
-            "ace":"",
+            "ace":"regdfv",
             "desicion_area":"",
-            "popup_text":""
+            "popup_text":"ergdf"
         },
         {
             "task_text":"Рассчитайте потенциалы для клеток таблицы",
-            "ace":"",
+            "ace":"regdf",
             "desicion_area":"",
-            "popup_text":""
+            "popup_text":"ergfd"
         },
         {
             "task_text":"Перестройте маршрут с учетом потенциалов",
-            "ace":"",
+            "ace":"ergdf",
             "desicion_area":"",
-            "popup_text":""
+            "popup_text":"ergdf"
         }
     ]
 }

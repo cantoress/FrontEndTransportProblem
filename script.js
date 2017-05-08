@@ -1,41 +1,90 @@
-var variants = {};
+var variants_array = {};
 var tasks = {};
 var resources;
+var variant_number;
+var variant;
+var task_array;
+var task_number;
 
 var task = 0;
 var consumer = 0;
 var storage = 0;
 var storage_sum = 0;
 
+//EventListener-ы для кнопки перехода на следующее задание
+function next_task(){
+
+    document.querySelector('.main').classList.add('darkened');
+    document.querySelector('.pop_up').classList.remove('closed');
+
+    update_task_number(task_number+1);
+    start_task(resources, get_task_number()-1, tasks, variants_array);
+}
+
+function finish(){
+    document.querySelector('.main').classList.add('darkened');
+    document.querySelector('.nexttask').disabled = 'true';
+    document.querySelector('.pop_up p').innerHTML = "Поздравляем! Вы закончили все упражнения";
+    document.querySelector('.pop_up').classList.remove('closed');
+}
+
+function work_ace(){
+    execute_ace();
+
+    var lines = document.querySelectorAll('.matrixarea tr');
+    for(var iii = 0; iii<lines.length;iii++){
+        var columnes = lines[iii].querySelectorAll('td');
+            for(var jjj = 0; jjj<columnes.length-1;jjj++){
+                columnes[jjj].innerHTML = abc[iii][jjj];
+            }
+    }
+}
+
+document.querySelector('.drawcode').addEventListener('click',work_ace);
+
 start_work();
+
+
+
 //Начинаем работу с заданиями
 function start_work(){
 
     resources = get_resources();
     tasks = resources.tasks;
-    variants = resources.variants;
-    var task_number = get_task_number()-1;
+    variants_array = resources.variants;
+    task_number = get_task_number();
 
-    start_task(resources, task_number, tasks, variants);
+    start_task(resources, task_number-1, tasks, variants_array);
 }
 
-function start_task(resources, task_number, tasks, variants){
+//Получает данные для данного задания и отправляет формировать интерфейс
+function start_task(resources, task_number, tasks, variants_array){
 
-    var task = tasks[task_number];
-    var variant = {};
+    task_array = tasks[task_number];
     if(task_number==0){
-        variant = generate_variant(variants);
-    }else{
-        variant = resources.variant;
+        variant = generate_variant(variants_array);
     }
 
-    fill_interface(task, variant);
+    if (task_number==tasks.length-1) {
+        document.querySelector('.nexttask').removeEventListener('click',next_task);
+        document.querySelector('.nexttask').addEventListener('click',finish);
+    } else{
+        document.querySelector('.nexttask').addEventListener('click',next_task);
+    }
+
+    task = variant.task;
+    consumer = variant.consumer;
+    storage = variant.storage;
+    storage_sum = variant.storage_sum;
+
+    fill_interface(task_array, variant);
 }
 
-function fill_interface(task, variant){
+//Заполняет интерфейс данными для этого задания
+function fill_interface(task_array, variant){
 
-     document.querySelector('.instruction').innerHTML = task.task_text;
-     document.querySelector('.pop_up').append(task.popup_text);
+     document.querySelector('.instruction').innerHTML = task_array.task_text;
+     document.querySelector('.pop_up p').innerHTML = task_array.popup_text;
 
      var lines = document.querySelectorAll('.taskmatrix tr');
      for(var iii = 0; iii<lines.length;iii++){
@@ -52,14 +101,14 @@ function fill_interface(task, variant){
          }
      }
 
-     editor.setValue(task.ace);
+     editor.setValue(task_array.ace);
 }
 
 //Возвращает случайный вариант задания (для первого задания)
-function generate_variant(variants){
-    var random_number = Math.floor(Math.random() * variants.length);
-    resources['variant'] = variants[random_number];
-    return(variants[random_number]);
+function generate_variant(variants_array){
+    variant_number = Math.floor(Math.random() * variants_array.length);
+    resources['variant'] = variants_array[variant_number];
+    return(variants_array[variant_number]);
 }
 
 get_start_values();
@@ -81,7 +130,9 @@ get_start_values();
 var matrix_potentials = get_matrix_potentials(column_potentials.upper, column_potentials.left);
 
 get_start_values();
-var result_potential = change_route(task, matrix_potentials, result_north_west);
+// var result_potential = change_route(task, matrix_potentials, result_north_west);
+
+// document.write(result_potential.matrix);
 // check_desicion(real_potential, result_potential);
  // document.write(resources.variants[1].storage);
 
@@ -97,13 +148,14 @@ function execute_ace(){
 
 //Возвращает номер задания из адресной строки
 function get_task_number() {
-  index = window.location.hash;
-  return parseInt(index.replace('#',''));
+  var index = window.location.hash;
+  task_number = parseInt(index.replace('#',''));
+  return task_number;
 }
 
 //Увеличивает номер задания в адресной строке
 function update_task_number(index) {
-  window.location.hash = index+1;
+  window.location.hash = index;
 }
 
 //Находит ячейку с наибольшей разницей между стоимостью перевозки и потенциалом и меняет маршрут для уменьшения суммы. Возвращает JSON с полями matrix и sum
@@ -371,10 +423,12 @@ function get_desicion_min_sum(task, consumer, storage, storage_sum){
 //Возвращает исходные данные (пока так)
 function get_start_values(){
 
-	task = [[3,1,4,3,7],[1,2,6,8,3],[9,1,6,4,5],[2,4,2,1,5]];
-	consumer = [60,15,20,30];
-	storage = [15,40,10,15,45];
-	storage_sum = 125;
+    variant = resources.variants[variant_number];
+
+    task = variant.task;
+    consumer = variant.consumer;
+    storage = variant.storage;
+    storage_sum = variant.storage_sum;
 
 }
 
@@ -382,4 +436,9 @@ function get_start_values(){
 document.querySelector('.close_pop_up').addEventListener('click', function(){
     document.querySelector('.main').classList.remove('darkened');
     document.querySelector('.pop_up').classList.add('closed');
+});
+
+//Кнопочка для возврата редактора в начальное состояние (с шаблоном)
+document.querySelector('.clearcode').addEventListener('click', function(){
+    editor.setValue(task_array.ace);
 });

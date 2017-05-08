@@ -211,3 +211,8 @@ button.nexttask:hover{
 
 .close_pop_up::after {
   transform: rotate(45deg);
+}
+
+.nexttask:disabled{
+    display:none;
+}
