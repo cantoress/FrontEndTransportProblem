@@ -10,28 +10,27 @@
         <header class = "main-header">
             Транспортные сети
         </header>
-        <div class = "main">
+        <div class = "main darkened">
             <div class = "task">
                 <div class = "instruction">
-                    <p>Это инструкция к тому, что нужно выполнить. Тут будет просто текст, который будет меняться в зависимости от задания.</p>
                 </div>
                 <div class = "taskmatrix">
                     <!--Тут будет матрица задания. Скорее всего, в виде таблицы (матрица фиксированной размерности, но вариант генерируется случайно)-->
                     <table>
                         <tr>
-                            <td>5</td><td>4</td><td>8</td><td>7</td><td>3</td><td>20</td>
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
                         </tr>
                         <tr>
-                            <td>4</td><td>8</td><td>7</td><td>1</td><td>2</td><td>10</td>
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
                         </tr>
                         <tr>
-                            <td>6</td><td>4</td><td>1</td><td>9</td><td>3</td><td>10</td>
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
                         </tr>
                         <tr>
-                            <td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>30</td>
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
                         </tr>
                         <tr>
-                            <td>10</td><td>15</td><td>20</td><td>10</td><td>15</td><td></td>
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
                         </tr>
                     </table>
                 </div>
@@ -73,10 +72,13 @@
         <!-- <footer class = "main-footer">
             Made by cantoress
         </footer> -->
-
+        <div class = "pop_up">
+            <button class = "close_pop_up"></button>
+        </div>
 
         <script src="ace/ace.js" type="text/javascript" charset="utf-8"></script>
         <script src="chai.js" type="text/javascript"></script>
+        <script src="resources.json"></script>
         <script>
             var editor = ace.edit("editor");
             editor.setTheme("ace/theme/dawn");

@@ -1,8 +1,66 @@
+var variants = {};
+var tasks = {};
+var resources;
+
 var task = 0;
 var consumer = 0;
 var storage = 0;
 var storage_sum = 0;
-var resources = 0;
+
+start_work();
+//Начинаем работу с заданиями
+function start_work(){
+
+    resources = get_resources();
+    tasks = resources.tasks;
+    variants = resources.variants;
+    var task_number = get_task_number()-1;
+
+    start_task(resources, task_number, tasks, variants);
+}
+
+function start_task(resources, task_number, tasks, variants){
+
+    var task = tasks[task_number];
+    var variant = {};
+    if(task_number==0){
+        variant = generate_variant(variants);
+    }else{
+        variant = resources.variant;
+    }
+
+    fill_interface(task, variant);
+}
+
+function fill_interface(task, variant){
+
+     document.querySelector('.instruction').innerHTML = task.task_text;
+     document.querySelector('.pop_up').append(task.popup_text);
+
+     var lines = document.querySelectorAll('.taskmatrix tr');
+     for(var iii = 0; iii<lines.length;iii++){
+         var columnes = lines[iii].querySelectorAll('td');
+         if(iii==lines.length-1){
+             for(var jjj = 0; jjj<columnes.length-1;jjj++){
+                 columnes[jjj].innerHTML = variant.storage[jjj];
+             }
+         }else{
+             for(var jjj = 0; jjj<columnes.length-1;jjj++){
+                 columnes[jjj].innerHTML = variant.task[iii][jjj];
+             }
+             columnes[columnes.length-1].innerHTML = variant.consumer[iii];
+         }
+     }
+
+     editor.setValue(task.ace);
+}
+
+//Возвращает случайный вариант задания (для первого задания)
+function generate_variant(variants){
+    var random_number = Math.floor(Math.random() * variants.length);
+    resources['variant'] = variants[random_number];
+    return(variants[random_number]);
+}
 
 get_start_values();
 
@@ -25,14 +83,14 @@ var matrix_potentials = get_matrix_potentials(column_potentials.upper, column_po
 get_start_values();
 var result_potential = change_route(task, matrix_potentials, result_north_west);
 // check_desicion(real_potential, result_potential);
+ // document.write(resources.variants[1].storage);
 
 //Читает JSON-файл с данными для заданий и парсит. Возвращает JSON-объект
 function get_resources() {
-  getJSON = loadJSON('resources.json');
-  resources = JSON.parse(getJSON);
   return resources;
 }
 
+//Достает код и редактора и заставляет его работать. Создаются переменные, записанные в коде
 function execute_ace(){
 	document.write("<script>"+editor.getValue()+"</script>");
 }
@@ -41,6 +99,11 @@ function execute_ace(){
 function get_task_number() {
   index = window.location.hash;
   return parseInt(index.replace('#',''));
+}
+
+//Увеличивает номер задания в адресной строке
+function update_task_number(index) {
+  window.location.hash = index+1;
 }
 
 //Находит ячейку с наибольшей разницей между стоимостью перевозки и потенциалом и меняет маршрут для уменьшения суммы. Возвращает JSON с полями matrix и sum
@@ -314,3 +377,9 @@ function get_start_values(){
 	storage_sum = 125;
 
 }
+
+//Кнопочка для pop_up в начале заданий
+document.querySelector('.close_pop_up').addEventListener('click', function(){
+    document.querySelector('.main').classList.remove('darkened');
+    document.querySelector('.pop_up').classList.add('closed');
+});
