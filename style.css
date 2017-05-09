@@ -92,6 +92,15 @@ body{
 
 .matrixarea p{
     margin: 20px;
+    margin-bottom: 10px;
+}
+
+#matrixframe{
+    margin:0;
+    padding:0;
+    width: 600px;
+    height:210px;
+    border:none;
 }
 
 .matrixarea table{
@@ -150,7 +159,7 @@ button{
     cursor: pointer;
 }
 
-button.nexttask{
+button.nexttask, button.prevtask{
     position:absolute;
     width: 80px;
     bottom: 5px;
@@ -159,10 +168,13 @@ button.nexttask{
     opacity: 0.8;
 }
 
-button.nexttask:hover{
-    opacity: 1.0;
+button.prevtask{
+    right: 120px;
 }
 
+button.nexttask:hover, button.prevtask:hover{
+    opacity: 1.0;
+}
 
 .darkened{
     opacity: 0.3;
@@ -213,6 +225,6 @@ button.nexttask:hover{
   transform: rotate(45deg);
 }
 
-.nexttask:disabled{
+.nexttask:disabled, .prevtask:disabled{
     display:none;
 }

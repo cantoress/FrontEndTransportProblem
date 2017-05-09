@@ -1,3 +1,6 @@
+var iframe;
+var iframeDoc;
+
 var variants_array = {};
 var tasks = {};
 var resources;
@@ -23,19 +26,34 @@ function next_task(){
 
 function finish(){
     document.querySelector('.main').classList.add('darkened');
-    document.querySelector('.nexttask').disabled = 'true';
     document.querySelector('.pop_up p').innerHTML = "Поздравляем! Вы закончили все упражнения";
+    document.querySelector('.nexttask').disabled = true;
     document.querySelector('.pop_up').classList.remove('closed');
 }
 
-function work_ace(){
-    execute_ace();
+//EventListener для кнопки перехода на предыдущее задание
+function prev_task(){
 
-    var lines = document.querySelectorAll('.matrixarea tr');
+    document.querySelector('.main').classList.add('darkened');
+    document.querySelector('.pop_up').classList.remove('closed');
+
+    update_task_number(task_number-1);
+    start_task(resources, get_task_number()-1, tasks, variants_array);
+}
+
+function work_ace(){
+    var abc = execute_ace();
+    abc = abc.split('[').join('');
+    abc = abc.split(']').join('');
+    abc = abc.split(' ').join('');
+    console.log(abc);
+    var coding = abc.split(',');
+    console.log(coding);
+    var lines = iframeDoc.querySelectorAll('tr');
     for(var iii = 0; iii<lines.length;iii++){
         var columnes = lines[iii].querySelectorAll('td');
-            for(var jjj = 0; jjj<columnes.length-1;jjj++){
-                columnes[jjj].innerHTML = abc[iii][jjj];
+            for(var jjj = 0; jjj<columnes.length;jjj++){
+                columnes[jjj].innerHTML = coding[iii*5+jjj];
             }
     }
 }
@@ -54,6 +72,17 @@ function start_work(){
     variants_array = resources.variants;
     task_number = get_task_number();
 
+
+    iframe = document.querySelector('#matrixframe');
+    iframeDoc = iframe.contentWindow.document.body;
+    iframeDoc.innerHTML = "<table><tr><td>10</td><td>10</td><td></td><td></td><td></td></tr><tr><td></td><td>5</td><td>5</td><td></td><td></td></tr><tr><td></td><td></td><td>10</td><td></td><td></td></tr><tr><td></td><td></td><td>5</td><td>10</td><td>15</td></tr></table>";
+
+    var cssLink = document.createElement("link");
+    cssLink.href = "styleframes.css";
+    cssLink.rel = "stylesheet";
+    cssLink.type = "text/css";
+    iframeDoc.appendChild(cssLink);
+
     start_task(resources, task_number-1, tasks, variants_array);
 }
 
@@ -61,15 +90,28 @@ function start_work(){
 function start_task(resources, task_number, tasks, variants_array){
 
     task_array = tasks[task_number];
-    if(task_number==0){
+
+    document.querySelector('.prevtask').addEventListener('click',prev_task);
+    document.querySelector('.nexttask').addEventListener('click',next_task);
+    // document.querySelector('.prevtask').disabled = 'false';
+    // document.querySelector('.nexttask').disabled = 'false';
+
+    if(typeof variant=="undefined"){
         variant = generate_variant(variants_array);
+    }
+
+    if(task_number==0){
+        document.querySelector('.prevtask').removeEventListener('click',prev_task);
+        document.querySelector('.prevtask').disabled = true;
+    } else{
+        document.querySelector('.prevtask').disabled = false;
     }
 
     if (task_number==tasks.length-1) {
         document.querySelector('.nexttask').removeEventListener('click',next_task);
         document.querySelector('.nexttask').addEventListener('click',finish);
-    } else{
-        document.querySelector('.nexttask').addEventListener('click',next_task);
+    }else{
+        document.querySelector('.nexttask').disabled = false;
     }
 
     task = variant.task;
@@ -111,11 +153,11 @@ function generate_variant(variants_array){
     return(variants_array[variant_number]);
 }
 
-get_start_values();
+get_start_values(resources);
 
 var result_min_sum = get_desicion_min_sum(task, consumer, storage, storage_sum);
 
-get_start_values();
+get_start_values(resources);
 var result_north_west = get_desicion_north_west(task, consumer, storage, storage_sum);
 
 // check_desicion(real_min_sum, result_min_sum);
@@ -123,14 +165,14 @@ var result_north_west = get_desicion_north_west(task, consumer, storage, storage
 // document.write(result_north_west.route+"<br>");
 // check_desicion(real_north_west, result_north_west);
 
-get_start_values();
+get_start_values(resources);
 var column_potentials = get_column_potentials(task,result_north_west.route);
 
-get_start_values();
+get_start_values(resources);
 var matrix_potentials = get_matrix_potentials(column_potentials.upper, column_potentials.left);
 
-get_start_values();
-// var result_potential = change_route(task, matrix_potentials, result_north_west);
+get_start_values(resources);
+var result_potential = change_route(task, matrix_potentials, result_north_west);
 
 // document.write(result_potential.matrix);
 // check_desicion(real_potential, result_potential);
@@ -143,7 +185,7 @@ function get_resources() {
 
 //Достает код и редактора и заставляет его работать. Создаются переменные, записанные в коде
 function execute_ace(){
-	document.write("<script>"+editor.getValue()+"</script>");
+	return editor.getValue();
 }
 
 //Возвращает номер задания из адресной строки
@@ -153,7 +195,7 @@ function get_task_number() {
   return task_number;
 }
 
-//Увеличивает номер задания в адресной строке
+//Изменяет номер задания в адресной строке
 function update_task_number(index) {
   window.location.hash = index;
 }
@@ -421,14 +463,27 @@ function get_desicion_min_sum(task, consumer, storage, storage_sum){
 }
 
 //Возвращает исходные данные (пока так)
-function get_start_values(){
+function get_start_values(resources){
 
-    variant = resources.variants[variant_number];
+    task = [[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0]];
+    consumer = [0,0,0,0];
+    storage = [0,0,0,0,0];
+    storage_sum = 0;
 
-    task = variant.task;
-    consumer = variant.consumer;
-    storage = variant.storage;
-    storage_sum = variant.storage_sum;
+    for (var i = 0; i<4; i++){
+        for (var j = 0; j<5; j++){
+            task[i][j] = resources.variants[variant_number].task[i][j];
+        }
+    }
+
+    for (var i = 0; i<4; i++){
+        consumer[i] = resources.variants[variant_number].consumer[i];
+    }
+
+    for (var i = 0; i<5; i++){
+        storage[i] = resources.variants[variant_number].storage[i];
+        storage_sum +=storage[i];
+    }
 
 }
 

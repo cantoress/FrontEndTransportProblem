@@ -38,20 +38,9 @@
             <div class = "matrixarea">
                 <!--Тут тоже таблица под матрицу, размерность на 1 меньше по строкам и по столбцам (нужно только часть со стоимостью доставки) с заданием-->
                 <p>В этой матрице отображается выбранный маршрут с количеством товара для доставки</p>
-                <table>
-                    <tr>
-                        <td>10</td><td>10</td><td></td><td></td><td></td>
-                    </tr>
-                    <tr>
-                        <td></td><td>5</td><td>5</td><td></td><td></td>
-                    </tr>
-                    <tr>
-                        <td></td><td></td><td>10</td><td></td><td></td>
-                    </tr>
-                    <tr>
-                        <td></td><td></td><td>5</td><td>10</td><td>15</td>
-                    </tr>
-                </table>
+                <iframe id = "matrixframe" src="javascript:''" >
+
+                </iframe>
             </div>
             <div class = "codearea">
                 <p>Вводите здесь данные для ответа в формате, указанном в шаблоне</p>
@@ -67,6 +56,7 @@
                 А пока пусть будет картиночка</p>
                 <img src = "graph.jpg" alt = "Graph">
             </div>
+            <button class = "prevtask" id = "prevtask">Назад</button>
             <button class = "nexttask" id = "nexttask">Далее</button>
         </div>
         <!-- <footer class = "main-footer">
@@ -78,13 +68,13 @@
         </div>
 
         <script src="ace/ace.js" type="text/javascript" charset="utf-8"></script>
-        <script src="chai.js" type="text/javascript"></script>
-        <script src="resources.json"></script>
         <script>
             var editor = ace.edit("editor");
             editor.setTheme("ace/theme/dawn");
             editor.getSession().setMode("ace/mode/javascript");
         </script>
+        <script src="resources.json"></script>
         <script src="script.js" type="text/javascript" charset="utf-8"></script>
+
     </body>
 </html>
