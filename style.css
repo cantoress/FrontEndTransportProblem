@@ -191,6 +191,7 @@ button.nexttask:hover, button.prevtask:hover{
 
     border-radius: 10px;
     padding: 40px;
+    font-size: 16px;
 }
 
 .pop_up.closed{
@@ -228,3 +229,12 @@ button.nexttask:hover, button.prevtask:hover{
 .nexttask:disabled, .prevtask:disabled{
     display:none;
 }
+
+#container {
+    outline: 1px solid gray;
+   max-width: 600px;
+   height: 200px;
+   margin: auto;
+   margin-top: 30px;
+   /*background-color: rgba(255,0,0,0.1);*/
+ }

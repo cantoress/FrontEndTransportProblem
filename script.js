@@ -49,7 +49,7 @@ function work_ace(){
     abc = abc.split('[').join('');
     abc = abc.split(']').join('');
     abc = abc.split(' ').join('');
-    
+
     var coding = abc.split(',');
     var lines = iframeDoc.querySelectorAll('tr');
     for(var iii = 0; iii<lines.length;iii++){
@@ -92,12 +92,63 @@ function check_code(){
 
 }
 
-document.querySelector('.drawcode').addEventListener('click',work_ace);
+// document.querySelector('.drawcode').addEventListener('click',work_ace);
+document.querySelector('.drawcode').addEventListener('click',try_sigma);
 document.querySelector('.sendcode').addEventListener('click',check_code);
 
 start_work();
 
+function try_sigma(){
 
+    var abc = work_ace();
+
+    document.getElementById('container').innerHTML = "";
+
+    var g = {
+        nodes: [],
+        edges: []
+    };
+
+    for (i = 0; i < 4; i++)
+        g.nodes.push({
+            id: 'c' + i,
+            label: 'Consumer ' + (i+1),
+            x: 10+15*i,
+            y: 5,
+            size: consumer[i],
+            color: '#000'
+        });
+
+    for (i = 0; i < 5; i++)
+        g.nodes.push({
+            id: 's' + i,
+            label: 'Storage ' + (i+1),
+            x: 10+10*i,
+            y: 15,
+            size: storage[i],
+            color: '#00f'
+    });
+    for (i = 0; i < 4; i++){
+            for (var j = 0; j < 5; j++){
+                var color_edge = '#ccc';
+                if(abc[i*5+j]!=0){
+                    color_edge = '#0f0';
+                }
+                g.edges.push({
+                    id: 'e' + (i*5+j),
+                    source: 'c' + i,
+                    target: 's' + j,
+                    size: 1,
+                    color: color_edge
+                });
+        }
+    }
+    var s = new sigma({
+        graph: g,
+        container: ('container')
+        // container: iframegraph.contentWindow.document.getElementById('container')
+    });
+}
 
 //Начинаем работу с заданиями
 function start_work(){
@@ -110,7 +161,7 @@ function start_work(){
 
     iframe = document.querySelector('#matrixframe');
     iframeDoc = iframe.contentWindow.document.body;
-    iframeDoc.innerHTML = "<table><tr><td>10</td><td>10</td><td></td><td></td><td></td></tr><tr><td></td><td>5</td><td>5</td><td></td><td></td></tr><tr><td></td><td></td><td>10</td><td></td><td></td></tr><tr><td></td><td></td><td>5</td><td>10</td><td>15</td></tr></table>";
+    iframeDoc.innerHTML = "<table><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr></table>";
 
     var cssLink = document.createElement("link");
     cssLink.href = "styleframes.css";

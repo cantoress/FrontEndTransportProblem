@@ -52,9 +52,9 @@
                 </div>
             </div>
             <div class = "grapharea">
-                <p>Тут будет визуализация в виде графа<br>
-                А пока пусть будет картиночка</p>
-                <img src = "graph.jpg" alt = "Graph">
+                <!-- <iframe id = "graphframe" src="javascript:''" >
+                </iframe> -->
+                <div id = "container"></div>
             </div>
             <button class = "prevtask" id = "prevtask">Назад</button>
             <button class = "nexttask" id = "nexttask">Далее</button>
@@ -67,6 +67,8 @@
             <button class = "close_pop_up"></button>
         </div>
 
+        <script src="sigma/sigma.min.js"></script>
+        <script src="sigma/plugins/sigma.parsers.json.min.js"></script>
         <script src="ace/ace.js" type="text/javascript" charset="utf-8"></script>
         <script>
             var editor = ace.edit("editor");
