@@ -48,7 +48,7 @@ body{
     width: 50%;
 }
 
-.matrixarea::after, .grapharea::after, .main::after{
+.matrixarea::after,.matrixarea iframe::after, .grapharea::after, .main::after{
     content: "";
     display: table;
     clear: both;
@@ -99,7 +99,7 @@ body{
     margin:0;
     padding:0;
     width: 600px;
-    height:210px;
+    height:220px;
     border:none;
 }
 

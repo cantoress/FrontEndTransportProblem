@@ -4,7 +4,7 @@ body{
 
 table{
     margin: 0 50px;
-    margin-top: 40px;
+    margin-top: 20px;
     border-collapse: collapse;
 }
 
@@ -12,6 +12,28 @@ table td{
     border: 1px solid black;
     width: 40px;
     height: 40px;
+    padding: 0;
     text-align: center;
     vertical-align: middle;
+    float:left;
+}
+
+label{
+    float: right;
+    padding-right: 30px;
+    padding-top: 30px;
+}
+
+input{
+    width: 100px;
+}
+
+p{
+    padding-left: 20px;
+}
+
+table.task3{
+    display: inline-block;
+    vertical-align: middle;
+    padding-bottom:15px;
 }

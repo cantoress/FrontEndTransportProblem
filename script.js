@@ -45,24 +45,95 @@ function prev_task(){
 
 //EventListener для прорисовки данных из редактора в iframe
 function work_ace(){
-    var abc = execute_ace();
-    abc = abc.split('[').join('');
-    abc = abc.split(']').join('');
-    abc = abc.split(' ').join('');
 
-    var coding = abc.split(',');
-    var lines = iframeDoc.querySelectorAll('tr');
-    for(var iii = 0; iii<lines.length;iii++){
-        var columnes = lines[iii].querySelectorAll('td');
-        for(var jjj = 0; jjj<columnes.length;jjj++){
-            columnes[jjj].innerHTML = coding[iii*5+jjj];
+    if((task_number==0)||(task_number==1)||(task_number==5)){
+        var user_answer = execute_ace();
+        console.log(user_answer);
+        var user_answer_arr = user_answer.split(';');
+        console.log(user_answer_arr);
+
+        var user_matrix = user_answer_arr[0].split('=')[1];
+        user_matrix = user_matrix.split('[').join('');
+        user_matrix = user_matrix.split(']').join('');
+        user_matrix = user_matrix.split(' ').join('');
+        user_matrix = user_matrix.split(',');
+
+        var user_sum = user_answer_arr[1].split('=')[1];
+
+        var user_answer = {
+            "user_matrix": user_matrix,
+            "user_sum": user_sum
+        }
+
+    }else if(task_number==2){
+
+        var user_answer = execute_ace();
+        console.log(user_answer);
+        var user_answer_arr = user_answer.split(';');
+        console.log(user_answer_arr);
+
+        var user_u = user_answer_arr[0].split('=')[1];
+        user_u = user_u.split('[').join('');
+        user_u = user_u.split(']').join('');
+        user_u = user_u.split(' ').join('');
+        user_u = user_u.split(',');
+
+        var user_v = user_answer_arr[1].split('=')[1];
+        user_v = user_v.split('[').join('');
+        user_v = user_v.split(']').join('');
+        user_v = user_v.split(' ').join('');
+        user_v = user_v.split(',');
+
+        var user_answer = {
+            "user_u": user_u,
+            "user_v": user_v
+        }
+
+    }else if((task_number==3)||(task_number==4)){
+
+        var user_answer = execute_ace();
+        console.log(user_answer);
+        var user_answer_arr = user_answer.split(';');
+        console.log(user_answer_arr);
+
+        var user_matrix = user_answer_arr[0].split('=')[1];
+        user_matrix = user_matrix.split('[').join('');
+        user_matrix = user_matrix.split(']').join('');
+        user_matrix = user_matrix.split(' ').join('');
+        user_matrix = user_matrix.split(',');
+
+        var user_answer = {
+            "user_matrix": user_matrix
         }
     }
-    return coding;
+
+    console.log(user_answer);
+    return user_answer;
+
+}
+
+function draw_ace(){
+
+    var user_answer = work_ace();
+
+    if((task_number==0)||(task_number==1)||(task_number==5)){
+
+        var lines = iframeDoc.querySelectorAll('tr');
+        for(var iii = 0; iii<lines.length;iii++){
+            var columnes = lines[iii].querySelectorAll('td');
+            for(var jjj = 0; jjj<columnes.length;jjj++){
+                columnes[jjj].innerHTML = user_answer.user_matrix[iii*5+jjj];
+            }
+        }
+
+        iframeDoc.querySelectorAll('input')[0].value = user_answer.user_sum;
+
+    }
+
 }
 
 function check_code(){
-    var abc = work_ace();
+    var abc = try_sigma();
 
     var answer = [[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0]];
     for(var iii = 0; iii<4;iii++){
@@ -91,12 +162,9 @@ function check_code(){
     }
 
 }
-
-// document.querySelector('.drawcode').addEventListener('click',work_ace);
-document.querySelector('.drawcode').addEventListener('click',try_sigma);
+document.querySelector('.drawcode').addEventListener('click',draw_ace);
+// document.querySelector('.drawcode').addEventListener('click',try_sigma);
 document.querySelector('.sendcode').addEventListener('click',check_code);
-
-start_work();
 
 function try_sigma(){
 
@@ -112,7 +180,7 @@ function try_sigma(){
     for (i = 0; i < 4; i++)
         g.nodes.push({
             id: 'c' + i,
-            label: 'Consumer ' + (i+1),
+            label: 'Consumer ' + (i+1)+': '+consumer[i],
             x: 10+15*i,
             y: 5,
             size: consumer[i],
@@ -122,7 +190,7 @@ function try_sigma(){
     for (i = 0; i < 5; i++)
         g.nodes.push({
             id: 's' + i,
-            label: 'Storage ' + (i+1),
+            label: 'Storage ' + (i+1)+': '+storage[i],
             x: 10+10*i,
             y: 15,
             size: storage[i],
@@ -139,16 +207,25 @@ function try_sigma(){
                     source: 'c' + i,
                     target: 's' + j,
                     size: 1,
+                    label: abc[i*5+j]!=0?abc[i*5+j]:'',
                     color: color_edge
                 });
         }
     }
     var s = new sigma({
         graph: g,
-        container: ('container')
-        // container: iframegraph.contentWindow.document.getElementById('container')
+        renderer: {
+            container: "container",
+            type: "canvas"
+        },
+        settings: {
+        }
     });
+
+    return abc;
 }
+
+start_work();
 
 //Начинаем работу с заданиями
 function start_work(){
@@ -157,17 +234,6 @@ function start_work(){
     tasks = resources.tasks;
     variants_array = resources.variants;
     task_number = get_task_number();
-
-
-    iframe = document.querySelector('#matrixframe');
-    iframeDoc = iframe.contentWindow.document.body;
-    iframeDoc.innerHTML = "<table><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr></table>";
-
-    var cssLink = document.createElement("link");
-    cssLink.href = "styleframes.css";
-    cssLink.rel = "stylesheet";
-    cssLink.type = "text/css";
-    iframeDoc.appendChild(cssLink);
 
     start_task(resources, task_number-1, tasks, variants_array);
 }
@@ -181,6 +247,24 @@ function start_task(resources, task_number, tasks, variants_array){
     document.querySelector('.nexttask').addEventListener('click',next_task);
     // document.querySelector('.prevtask').disabled = 'false';
     // document.querySelector('.nexttask').disabled = 'false';
+
+    console.log(task_number);
+
+    iframe = document.querySelector('#matrixframe');
+    iframeDoc = iframe.contentWindow.document.body;
+    if((task_number==0)||(task_number==1)||(task_number==5)){
+        iframeDoc.innerHTML = "<label> Сумма: <input type = text readonly></label><table><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr></table>";
+    } else if(task_number==2){
+        iframeDoc.innerHTML = "<p>U = <table class = 'task3'><tr><td></td><td></td><td></td><td></td></tr></table></p><p>V = <table class = 'task3'><tr><td></td><td></td><td></td><td></td><td></td></tr></table></p>";
+    } else if((task_number==3)||(task_number==4)){
+        iframeDoc.innerHTML = "<table><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr></table>";
+    }
+
+    var cssLink = document.createElement("link");
+    cssLink.href = "styleframes.css";
+    cssLink.rel = "stylesheet";
+    cssLink.type = "text/css";
+    iframeDoc.appendChild(cssLink);
 
     if(typeof variant=="undefined"){
         variant = generate_variant(variants_array);
@@ -212,6 +296,7 @@ function fill_interface(task_array, variant){
 
      document.querySelector('.instruction').innerHTML = task_array.task_text;
      document.querySelector('.pop_up p').innerHTML = task_array.popup_text;
+     document.querySelector('.matrixarea p').innerHTML = task_array.desicion_text;
 
      var lines = document.querySelectorAll('.taskmatrix tr');
      for(var iii = 0; iii<lines.length;iii++){
@@ -407,19 +492,19 @@ function get_column_potentials(task,route){
 function check_desicion(real_result, user_result){
 
 	if(check_matrix(real_result.matrix,user_result.matrix).length==0){
-		document.write("Matrix gone");
-		document.write("<br>");
+		console.log("Matrix gone");
+		console.log("<br>");
 		if(real_result.sum==user_result.sum){
-			document.write("Sum also gone!");
-			document.write("<br>");
+			console.log("Sum also gone!");
+			console.log("<br>");
 		} else{
-			document.write("Sum not gone!");
-			document.write("<br>");
+			console.log("Sum not gone!");
+			console.log("<br>");
 		}
 	} else{
-		document.write("Matrix not gone!");
-		document.write("<br>");
-		document.write(check_matrix(real_result.matrix,user_result.matrix));
+		console.log("Matrix not gone!");
+	    console.log("<br>");
+		console.log(check_matrix(real_result.matrix,user_result.matrix));
 	}
 
 }
