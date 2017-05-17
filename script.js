@@ -20,13 +20,20 @@ function next_task(){
     document.querySelector('.main').classList.add('darkened');
     document.querySelector('.pop_up').classList.remove('closed');
 
-    update_task_number(task_number+1);
-    start_task(resources, get_task_number()-1, tasks, variants_array);
+    update_task_number(task_number+2);
+    task_number = get_task_number()-1;
+    start_task(resources, task_number, tasks, variants_array);
+
+    if(task_number==4){
+        editor.setValue("matrix = "+resources.desicions[variant_number].real_north_west.matrix+";");
+    } else if(task_number==5){
+        editor.setValue("matrix = "+resources.desicions[variant_number].real_north_west.matrix+";\nsum = 0;");
+    }
 }
 
 function finish(){
     document.querySelector('.main').classList.add('darkened');
-    document.querySelector('.pop_up p').innerHTML = "Поздравляем! Вы закончили все упражнения";
+    document.querySelector('.pop_up p').innerHTML = "Поздравляем! Вы закончили все упражнения!";
     document.querySelector('.nexttask').disabled = true;
     document.querySelector('.pop_up').classList.remove('closed');
 }
@@ -37,13 +44,14 @@ function prev_task(){
     document.querySelector('.main').classList.add('darkened');
     document.querySelector('.pop_up').classList.remove('closed');
 
-    update_task_number(task_number-1);
-    start_task(resources, get_task_number()-1, tasks, variants_array);
+    update_task_number(task_number);
+    task_number = get_task_number()-1;
+    start_task(resources, task_number, tasks, variants_array);
 
     document.querySelector('.nexttask').disabled = false;
 }
 
-//EventListener для прорисовки данных из редактора в iframe
+//Парсер данных из редактора для отрисовки sв iframe
 function work_ace(){
 
     if((task_number==0)||(task_number==1)||(task_number==5)){
@@ -61,8 +69,8 @@ function work_ace(){
         var user_sum = user_answer_arr[1].split('=')[1];
 
         var user_answer = {
-            "user_matrix": user_matrix,
-            "user_sum": user_sum
+            "matrix": user_matrix,
+            "sum": user_sum
         }
 
     }else if(task_number==2){
@@ -85,8 +93,8 @@ function work_ace(){
         user_v = user_v.split(',');
 
         var user_answer = {
-            "user_u": user_u,
-            "user_v": user_v
+            "u": user_u,
+            "v": user_v
         }
 
     }else if((task_number==3)||(task_number==4)){
@@ -103,7 +111,7 @@ function work_ace(){
         user_matrix = user_matrix.split(',');
 
         var user_answer = {
-            "user_matrix": user_matrix
+            "matrix": user_matrix
         }
     }
 
@@ -112,6 +120,7 @@ function work_ace(){
 
 }
 
+//EventListener для прорисовки данных из редактора в iframe
 function draw_ace(){
 
     var user_answer = work_ace();
@@ -122,53 +131,106 @@ function draw_ace(){
         for(var iii = 0; iii<lines.length;iii++){
             var columnes = lines[iii].querySelectorAll('td');
             for(var jjj = 0; jjj<columnes.length;jjj++){
-                columnes[jjj].innerHTML = user_answer.user_matrix[iii*5+jjj];
+                columnes[jjj].innerHTML = user_answer.matrix[iii*5+jjj];
             }
         }
 
-        iframeDoc.querySelectorAll('input')[0].value = user_answer.user_sum;
+        iframeDoc.querySelectorAll('input')[0].value = user_answer.sum;
+        try_sigma(user_answer);
+
+    } else if(task_number==2){
+        var lines = iframeDoc.querySelectorAll('tr');
+
+        var columnes = lines[0].querySelectorAll('td');
+        for(var jjj = 0; jjj<columnes.length;jjj++){
+            columnes[jjj].innerHTML = user_answer.u[jjj];
+        }
+
+        var columnes = lines[1].querySelectorAll('td');
+        for(var jjj = 0; jjj<columnes.length;jjj++){
+            columnes[jjj].innerHTML = user_answer.v[jjj];
+        }
+    } else if((task_number==3)||(task_number==4)){
+
+        var lines = iframeDoc.querySelectorAll('tr');
+        for(var iii = 0; iii<lines.length;iii++){
+            var columnes = lines[iii].querySelectorAll('td');
+            for(var jjj = 0; jjj<columnes.length;jjj++){
+                columnes[jjj].innerHTML = user_answer.matrix[iii*5+jjj];
+            }
+        }
 
     }
 
+
+    return user_answer;
 }
 
 function check_code(){
-    var abc = try_sigma();
+    var abc = draw_ace();
 
-    var answer = [[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0]];
-    for(var iii = 0; iii<4;iii++){
-        for(var jjj = 0; jjj<5;jjj++){
-            answer[iii][jjj] = abc[iii*5+jjj];
-        }
-    }
-    var results = check_matrix(answer,result_min_sum.matrix);
+    if((task_number==0)||(task_number==1)||(task_number==5)){
 
-    var lines = iframeDoc.querySelectorAll('tr');
-    for(var iii = 0; iii<lines.length;iii++){
-        var columnes = lines[iii].querySelectorAll('td');
-        for(var jjj = 0; jjj<columnes.length;jjj++){
-            columnes[jjj].style.backgroundColor = 'green';
+        var answer = [[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0]];
+        for(var iii = 0; iii<4;iii++){
+            for(var jjj = 0; jjj<5;jjj++){
+                answer[iii][jjj] = abc.matrix[iii*5+jjj];
+            }
         }
+        abc.matrix = answer;
+        if(task_number==0){
+            var results = check_desicion(result_min_sum, abc);
+        } else if(task_number==1){
+            var results = check_desicion(result_north_west, abc);
+        } else if(task_number==5){
+            var results = check_desicion(result_potential, abc);
+        }
+
+        var res_matrix = results.matrix;
+        console.log(res_matrix);
+        console.log(results.sum);
+
+        var lines = iframeDoc.querySelectorAll('tr');
+        for(var iii = 0; iii<lines.length;iii++){
+            var columnes = lines[iii].querySelectorAll('td');
+            for(var jjj = 0; jjj<columnes.length;jjj++){
+                columnes[jjj].style.backgroundColor = 'green';
+            }
+        }
+        var inp = iframeDoc.querySelector('input');
+        inp.style.backgroundColor = "green";
+
+        if(res_matrix.length!=1){
+            for(var i = 0; i<res_matrix.length; i++){
+                var lines = iframeDoc.querySelectorAll('tr');
+                var columnes = lines[Math.floor(res_matrix[i]/10)].querySelectorAll('td');
+                columnes[res_matrix[i]%10].style.backgroundColor = 'red';
+            }
+        }
+
+        if(results.sum!=0){
+            inp.style.backgroundColor = "red";
+        }
+
+        if((results.sum==0)&&(res_matrix==0)){
+            console.log("aaa");
+            document.querySelector('.nexttask').disabled = false;
+        }
+
     }
 
-    if(results.length!=0){
-        for(var i = 0; i<results.length; i++){
-            var lines = iframeDoc.querySelectorAll('tr');
-            var columnes = lines[Math.floor(results[i]/10)].querySelectorAll('td');
-            columnes[results[i]%10].style.backgroundColor = 'red';
-        }
-    } else{
-        document.querySelector('.nexttask').disabled = false;
-    }
+
 
 }
 document.querySelector('.drawcode').addEventListener('click',draw_ace);
 // document.querySelector('.drawcode').addEventListener('click',try_sigma);
 document.querySelector('.sendcode').addEventListener('click',check_code);
 
-function try_sigma(){
+function try_sigma(user_answer){
 
-    var abc = work_ace();
+    if(typeof user_answer!="undefined"){
+        var abc = user_answer.matrix;
+    }
 
     document.getElementById('container').innerHTML = "";
 
@@ -199,15 +261,20 @@ function try_sigma(){
     for (i = 0; i < 4; i++){
             for (var j = 0; j < 5; j++){
                 var color_edge = '#ccc';
-                if(abc[i*5+j]!=0){
-                    color_edge = '#0f0';
+                var label_edge = '';
+                if(typeof abc !="undefined"){
+                    if(abc[i*5+j]!=0){
+                        color_edge = '#0f0';
+                        label_edge = abc[i*5+j];
+                    }
                 }
+
                 g.edges.push({
                     id: 'e' + (i*5+j),
                     source: 'c' + i,
                     target: 's' + j,
                     size: 1,
-                    label: abc[i*5+j]!=0?abc[i*5+j]:'',
+                    label: label_edge,
                     color: color_edge
                 });
         }
@@ -233,9 +300,9 @@ function start_work(){
     resources = get_resources();
     tasks = resources.tasks;
     variants_array = resources.variants;
-    task_number = get_task_number();
+    task_number = get_task_number()-1;
 
-    start_task(resources, task_number-1, tasks, variants_array);
+    start_task(resources, task_number, tasks, variants_array);
 }
 
 //Получает данные для данного задания и отправляет формировать интерфейс
@@ -247,8 +314,6 @@ function start_task(resources, task_number, tasks, variants_array){
     document.querySelector('.nexttask').addEventListener('click',next_task);
     // document.querySelector('.prevtask').disabled = 'false';
     // document.querySelector('.nexttask').disabled = 'false';
-
-    console.log(task_number);
 
     iframe = document.querySelector('#matrixframe');
     iframeDoc = iframe.contentWindow.document.body;
@@ -314,6 +379,7 @@ function fill_interface(task_array, variant){
      }
 
      editor.setValue(task_array.ace);
+     try_sigma();
 }
 
 //Возвращает случайный вариант задания (для первого задания)
@@ -491,22 +557,38 @@ function get_column_potentials(task,route){
 //Сверяет JSONы реального решения и полученного с помощью алгоритма
 function check_desicion(real_result, user_result){
 
+    console.log("my: "+real_result.matrix);
+    console.log("des: "+user_result.matrix);
+
 	if(check_matrix(real_result.matrix,user_result.matrix).length==0){
 		console.log("Matrix gone");
 		console.log("<br>");
 		if(real_result.sum==user_result.sum){
 			console.log("Sum also gone!");
 			console.log("<br>");
+            var result = {
+                "matrix": 0,
+                "sum": 0
+            }
 		} else{
 			console.log("Sum not gone!");
 			console.log("<br>");
+            var result = {
+                "matrix": 0,
+                "sum": 1
+            }
 		}
 	} else{
 		console.log("Matrix not gone!");
 	    console.log("<br>");
 		console.log(check_matrix(real_result.matrix,user_result.matrix));
+        var result = {
+            "matrix": check_matrix(real_result.matrix,user_result.matrix),
+            "sum": 1
+        }
 	}
 
+    return result;
 }
 
 //Проверяет две матрицы размерности 4*5 и возвращает массив. Если массив пуст - матрицы равны, если не пуст - там лежат номера неравных ячеек
@@ -656,6 +738,7 @@ function get_start_values(resources){
     }
 
 }
+
 
 //Кнопочка для pop_up в начале заданий
 document.querySelector('.close_pop_up').addEventListener('click', function(){
