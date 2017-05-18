@@ -166,8 +166,36 @@ function draw_ace(){
     return user_answer;
 }
 
+function get_desicions(){
+    get_start_values(resources);
+    var result_min_sum = get_desicion_min_sum(task, consumer, storage, storage_sum);
+
+    get_start_values(resources);
+    var result_north_west = get_desicion_north_west(task, consumer, storage, storage_sum);
+
+    get_start_values(resources);
+    var column_potentials = get_column_potentials(task,result_north_west.route);
+    var matrix_potentials = get_matrix_potentials(column_potentials.upper, column_potentials.left);
+
+    get_start_values(resources);
+    var result_potential = change_route(task, matrix_potentials, result_north_west);
+//Иначе result_potential все ломает
+    get_start_values(resources);
+    var result_north_west = get_desicion_north_west(task, consumer, storage, storage_sum);
+
+    var desicions = {
+        "result_min_sum": result_min_sum,
+        "result_north_west": result_north_west,
+        "column_potentials": column_potentials,
+        "matrix_potentials": matrix_potentials,
+        "result_potential": result_potential
+    }
+    return desicions;
+}
+
 function check_code(){
     var abc = draw_ace();
+    var desicions = get_desicions();
 
     if((task_number==0)||(task_number==1)||(task_number==5)){
 
@@ -178,12 +206,13 @@ function check_code(){
             }
         }
         abc.matrix = answer;
+
         if(task_number==0){
-            var results = check_desicion(result_min_sum, abc);
+            var results = check_desicion(desicions.result_min_sum, abc);
         } else if(task_number==1){
-            var results = check_desicion(result_north_west, abc);
+            var results = check_desicion(desicions.result_north_west, abc);
         } else if(task_number==5){
-            var results = check_desicion(result_potential, abc);
+            var results = check_desicion(desicions.result_potential, abc);
         }
 
         var res_matrix = results.matrix;
@@ -213,13 +242,76 @@ function check_code(){
         }
 
         if((results.sum==0)&&(res_matrix==0)){
-            console.log("aaa");
             document.querySelector('.nexttask').disabled = false;
         }
 
+    } else if(task_number==2){
+
+        var u = abc.u;
+        var v = abc.v;
+        var answer = desicions.column_potentials;
+
+        console.log(desicions.column_potentials);
+        var correct = true;
+        var cells = iframeDoc.querySelectorAll('td');
+        for(var i = 0;i<u.length;i++){
+            if(u[i]==answer.left[i]){
+                cells[i].style.backgroundColor = 'green';
+            } else{
+                cells[i].style.backgroundColor = 'red';
+                correct = false;
+            }
+        }
+
+        for(var i = 0;i<v.length;i++){
+            if(v[i]==answer.upper[i]){
+                cells[i+4].style.backgroundColor = 'green';
+            } else{
+                cells[i+4].style.backgroundColor = 'red';
+                correct = false;
+            }
+        }
+
+        if(correct){
+            document.querySelector('.nexttask').disabled = false;
+        }
+
+    }else if((task_number==3)||(task_number==4)){
+
+        var answer = [[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0]];
+        for(var iii = 0; iii<4;iii++){
+            for(var jjj = 0; jjj<5;jjj++){
+                answer[iii][jjj] = abc.matrix[iii*5+jjj];
+            }
+        }
+        abc.matrix = answer;
+        // console.log(result_potential);
+        if (task_number==3) {
+            var results = check_matrix(abc.matrix, desicions.matrix_potentials);
+        }else{
+            var results = check_matrix(abc.matrix, desicions.result_potential.matrix_signs);
+        }
+        console.log(results);
+
+        var lines = iframeDoc.querySelectorAll('tr');
+        for(var iii = 0; iii<lines.length;iii++){
+            var columnes = lines[iii].querySelectorAll('td');
+            for(var jjj = 0; jjj<columnes.length;jjj++){
+                columnes[jjj].style.backgroundColor = 'green';
+            }
+        }
+        if(results.length!=1){
+            for(var i = 0; i<results.length; i++){
+                var lines = iframeDoc.querySelectorAll('tr');
+                var columnes = lines[Math.floor(results[i]/10)].querySelectorAll('td');
+                columnes[results[i]%10].style.backgroundColor = 'red';
+            }
+        }
+
+        if(results==0){
+            document.querySelector('.nexttask').disabled = false;
+        }
     }
-
-
 
 }
 document.querySelector('.drawcode').addEventListener('click',draw_ace);
@@ -227,6 +319,8 @@ document.querySelector('.drawcode').addEventListener('click',draw_ace);
 document.querySelector('.sendcode').addEventListener('click',check_code);
 
 function try_sigma(user_answer){
+
+    get_start_values(resources);
 
     if(typeof user_answer!="undefined"){
         var abc = user_answer.matrix;
@@ -389,31 +483,6 @@ function generate_variant(variants_array){
     return(variants_array[variant_number]);
 }
 
-get_start_values(resources);
-
-var result_min_sum = get_desicion_min_sum(task, consumer, storage, storage_sum);
-
-get_start_values(resources);
-var result_north_west = get_desicion_north_west(task, consumer, storage, storage_sum);
-
-// check_desicion(real_min_sum, result_min_sum);
-// document.write("NOW!<br>");
-// document.write(result_north_west.route+"<br>");
-// check_desicion(real_north_west, result_north_west);
-
-get_start_values(resources);
-var column_potentials = get_column_potentials(task,result_north_west.route);
-
-get_start_values(resources);
-var matrix_potentials = get_matrix_potentials(column_potentials.upper, column_potentials.left);
-
-get_start_values(resources);
-var result_potential = change_route(task, matrix_potentials, result_north_west);
-
-// document.write(result_potential.matrix);
-// check_desicion(real_potential, result_potential);
- // document.write(resources.variants[1].storage);
-
 //Читает JSON-файл с данными для заданий и парсит. Возвращает JSON-объект
 function get_resources() {
   return resources;
@@ -436,7 +505,7 @@ function update_task_number(index) {
   window.location.hash = index;
 }
 
-//Находит ячейку с наибольшей разницей между стоимостью перевозки и потенциалом и меняет маршрут для уменьшения суммы. Возвращает JSON с полями matrix и sum
+//Находит ячейку с наибольшей разницей между стоимостью перевозки и потенциалом и меняет маршрут для уменьшения суммы. Возвращает JSON с полями matrix, sum, matrix_signs (клетки, где изменяется маршрут)
 function change_route(task,matrix_potentials, result_north_west){
 	var route = result_north_west.route;
 	var max_dif = 0;
@@ -488,6 +557,18 @@ function change_route(task,matrix_potentials, result_north_west){
 	var goods_first = result_north_west.matrix[got_variant_1[0]][got_variant_1[1]];
 	var goods_second = result_north_west.matrix[got_variant_2[0]][got_variant_2[1]];
 
+    var matrix_signs = [[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0]];
+    for (var i = 0; i<4; i++){
+        for (var j = 0; j<5; j++){
+            matrix_signs[i][j] = result_north_west.matrix[i][j];
+        }
+    }
+
+    matrix_signs[got_variant_1[0]][got_variant_1[1]]+='-';
+    matrix_signs[got_variant_2[0]][got_variant_2[1]]+='-';
+    matrix_signs[changing_cell_num[0]][changing_cell_num[1]]+='+';
+    matrix_signs[x][y]+='+';
+
 	var min_goods = (goods_first<goods_second?goods_first:goods_second);
 
 	result_north_west.matrix[got_variant_1[0]][got_variant_1[1]] = result_north_west.matrix[got_variant_1[0]][got_variant_1[1]] - min_goods;
@@ -503,6 +584,7 @@ function change_route(task,matrix_potentials, result_north_west){
 	}
 
 	var result = {
+        "matrix_signs": matrix_signs,
 		"matrix": result_north_west.matrix,
 		"sum": res_sum
 	};
@@ -557,8 +639,8 @@ function get_column_potentials(task,route){
 //Сверяет JSONы реального решения и полученного с помощью алгоритма
 function check_desicion(real_result, user_result){
 
-    console.log("my: "+real_result.matrix);
-    console.log("des: "+user_result.matrix);
+    console.log("got: "+real_result.matrix);
+    console.log("typed: "+user_result.matrix);
 
 	if(check_matrix(real_result.matrix,user_result.matrix).length==0){
 		console.log("Matrix gone");
