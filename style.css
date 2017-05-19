@@ -162,7 +162,7 @@ button{
 button.nexttask, button.prevtask{
     position:absolute;
     width: 80px;
-    bottom: 5px;
+    bottom: 11px;
     right: 20px;
     background-color: #FFFF50;
     opacity: 0.8;
@@ -232,9 +232,9 @@ button.nexttask:hover, button.prevtask:hover{
 
 #container {
     outline: 1px solid gray;
-   max-width: 600px;
-   height: 200px;
-   margin: auto;
-   margin-top: 30px;
+    max-width: 650px;
+    height: 250px;
+    margin: auto;
+    margin-top: 30px;
    /*background-color: rgba(255,0,0,0.1);*/
  }

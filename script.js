@@ -159,7 +159,7 @@ function draw_ace(){
                 columnes[jjj].innerHTML = user_answer.matrix[iii*5+jjj];
             }
         }
-
+        try_sigma(user_answer);
     }
 
 
@@ -322,10 +322,6 @@ function try_sigma(user_answer){
 
     get_start_values(resources);
 
-    if(typeof user_answer!="undefined"){
-        var abc = user_answer.matrix;
-    }
-
     document.getElementById('container').innerHTML = "";
 
     var g = {
@@ -352,7 +348,14 @@ function try_sigma(user_answer){
             size: storage[i],
             color: '#00f'
     });
-    for (i = 0; i < 4; i++){
+
+    if ((task_number==0)||(task_number==1)||(task_number==5)) {
+
+        if(typeof user_answer!="undefined"){
+            var abc = user_answer.matrix;
+        }
+
+        for (i = 0; i < 4; i++){
             for (var j = 0; j < 5; j++){
                 var color_edge = '#ccc';
                 var label_edge = '';
@@ -371,8 +374,92 @@ function try_sigma(user_answer){
                     label: label_edge,
                     color: color_edge
                 });
+            }
+        }
+
+    } else if ((task_number==2)||(task_number==3)) {
+
+        var abc = get_desicions().result_north_west.matrix;
+
+        for (i = 0; i < 4; i++){
+            for (var j = 0; j < 5; j++){
+                var color_edge = '#ccc';
+                var label_edge = '';
+                if(abc[i][j]!=0){
+                    color_edge = '#0f0';
+                    label_edge += abc[i][j];
+                }
+
+                g.edges.push({
+                    id: 'e' + (i*5+j),
+                    source: 'c' + i,
+                    target: 's' + j,
+                    size: 1,
+                    label: label_edge,
+                    color: color_edge
+                });
+            }
+        }
+
+    } else if (task_number==4) {
+
+        if(typeof user_answer!="undefined"){
+            console.log("enter");
+            var abc = user_answer.matrix;
+
+            for (i = 0; i < 4; i++){
+                for (var j = 0; j < 5; j++){
+                    var color_edge = '#ccc';
+                    var label_edge = '';
+                    if(abc[i*5+j]!=0){
+                        if(abc[i*5+j].indexOf('-') + 1){
+                            color_edge = '#f00';
+                            console.log("-");
+                        } else if (abc[i*5+j].indexOf('+') + 1) {
+                            color_edge = '#00f';
+                            console.log("+");
+                        }else {
+                            console.log("a");
+                            color_edge = '#0f0';
+                        }
+                        label_edge = abc[i*5+j];
+                    }
+
+                    g.edges.push({
+                        id: 'e' + (i*5+j),
+                        source: 'c' + i,
+                        target: 's' + j,
+                        size: 1,
+                        label: label_edge,
+                        color: color_edge
+                    });
+                }
+            }
+        } else{
+            var abc = get_desicions().result_north_west.matrix;
+
+            for (i = 0; i < 4; i++){
+                for (var j = 0; j < 5; j++){
+                    var color_edge = '#ccc';
+                    var label_edge = '';
+                    if(abc[i][j]!=0){
+                        color_edge = '#0f0';
+                        label_edge += abc[i][j];
+                    }
+
+                    g.edges.push({
+                        id: 'e' + (i*5+j),
+                        source: 'c' + i,
+                        target: 's' + j,
+                        size: 1,
+                        label: label_edge,
+                        color: color_edge
+                    });
+                }
+            }
         }
     }
+
     var s = new sigma({
         graph: g,
         renderer: {
@@ -380,6 +467,8 @@ function try_sigma(user_answer){
             type: "canvas"
         },
         settings: {
+            mouseWheelEnabled: false,
+            sideMargin: 1
         }
     });
 
