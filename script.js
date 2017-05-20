@@ -601,7 +601,7 @@ function generate_variant(variants_array){
 function get_resources() {
     rawJSON = loadJSON('resources.json');
     resources = JSON.parse(rawJSON);
-    return resources ;
+    return resources;
 }
 
 function loadJSON(jsonURL) {
