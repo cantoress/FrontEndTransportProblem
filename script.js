@@ -357,7 +357,7 @@ function try_sigma(user_answer){
     for (i = 0; i < 4; i++)
         g.nodes.push({
             id: 'c' + i,
-            label: 'Consumer ' + (i+1)+': '+consumer[i],
+            label: 'Потребитель ' + (i+1)+': '+consumer[i],
             x: 10+15*i,
             y: 5,
             size: consumer[i],
@@ -367,7 +367,7 @@ function try_sigma(user_answer){
     for (i = 0; i < 5; i++)
         g.nodes.push({
             id: 's' + i,
-            label: 'Storage ' + (i+1)+': '+storage[i],
+            label: 'Склад ' + (i+1)+': '+storage[i],
             x: 10+10*i,
             y: 15,
             size: storage[i],
