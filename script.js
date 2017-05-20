@@ -24,11 +24,36 @@ function next_task(){
     task_number = get_task_number()-1;
     start_task(resources, task_number, tasks, variants_array);
 
-    if(task_number==4){
-        editor.setValue("matrix = "+resources.desicions[variant_number].real_north_west.matrix+";");
-    } else if(task_number==5){
-        editor.setValue("matrix = "+resources.desicions[variant_number].real_north_west.matrix+";\nsum = 0;");
+    if((task_number==4)||(task_number==5)){
+        var ace_matrix = "[";
+        if(task_number==4){
+            var example = get_desicions().result_north_west.matrix;
+        } else if(task_number==5){
+            var example = get_desicions().result_potential.matrix_signs;
+        }
+
+        for(var i = 0; i<4; i++){
+            ace_matrix+="[";
+            for(var j = 0; j<4; j++){
+                ace_matrix+=example[i][j];
+                ace_matrix+=", ";
+            }
+            ace_matrix+=example[i][4];
+            if(i!=3){
+                ace_matrix+="], ";
+            }else {
+                ace_matrix+="]";
+            }
+        }
+        ace_matrix+="]";
+        if(task_number==4){
+            editor.setValue("matrix = "+ace_matrix+";");
+        } else if(task_number==5){
+            editor.setValue("matrix = "+ace_matrix+";\nsum = 0;");
+        }
     }
+
+
 }
 
 function finish(){
@@ -574,7 +599,19 @@ function generate_variant(variants_array){
 
 //Читает JSON-файл с данными для заданий и парсит. Возвращает JSON-объект
 function get_resources() {
-  return resources;
+    rawJSON = loadJSON('resources.json');
+    resources = JSON.parse(rawJSON);
+    return resources ;
+}
+
+function loadJSON(jsonURL) {
+  var xobj = new XMLHttpRequest();
+
+  xobj.overrideMimeType("application/json");
+  xobj.open('GET', jsonURL, false);
+  xobj.send(null);
+
+  return xobj.responseText;
 }
 
 //Достает код и редактора и заставляет его работать. Создаются переменные, записанные в коде
@@ -919,5 +956,34 @@ document.querySelector('.close_pop_up').addEventListener('click', function(){
 
 //Кнопочка для возврата редактора в начальное состояние (с шаблоном)
 document.querySelector('.clearcode').addEventListener('click', function(){
-    editor.setValue(task_array.ace);
+    if((task_number==4)||(task_number==5)){
+        var ace_matrix = "[";
+        if(task_number==4){
+            var example = get_desicions().result_north_west.matrix;
+        } else if(task_number==5){
+            var example = get_desicions().result_potential.matrix_signs;
+        }
+
+        for(var i = 0; i<4; i++){
+            ace_matrix+="[";
+            for(var j = 0; j<4; j++){
+                ace_matrix+=example[i][j];
+                ace_matrix+=", ";
+            }
+            ace_matrix+=example[i][4];
+            if(i!=3){
+                ace_matrix+="], ";
+            }else {
+                ace_matrix+="]";
+            }
+        }
+        ace_matrix+="]";
+        if(task_number==4){
+            editor.setValue("matrix = "+ace_matrix+";");
+        } else if(task_number==5){
+            editor.setValue("matrix = "+ace_matrix+";\nsum = 0;");
+        }
+    }else{
+        editor.setValue(task_array.ace);
+    }
 });
