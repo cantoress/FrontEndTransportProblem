@@ -599,19 +599,7 @@ function generate_variant(variants_array){
 
 //Читает JSON-файл с данными для заданий и парсит. Возвращает JSON-объект
 function get_resources() {
-    rawJSON = loadJSON('resources.json');
-    resources = JSON.parse(rawJSON);
     return resources;
-}
-
-function loadJSON(jsonURL) {
-  var xobj = new XMLHttpRequest();
-
-  xobj.overrideMimeType("application/json");
-  xobj.open('GET', jsonURL, false);
-  xobj.send(null);
-
-  return xobj.responseText;
 }
 
 //Достает код и редактора и заставляет его работать. Создаются переменные, записанные в коде
