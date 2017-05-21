@@ -81,9 +81,7 @@ function work_ace(){
 
     if((task_number==0)||(task_number==1)||(task_number==5)){
         var user_answer = execute_ace();
-        console.log(user_answer);
         var user_answer_arr = user_answer.split(';');
-        console.log(user_answer_arr);
 
         var user_matrix = user_answer_arr[0].split('=')[1];
         user_matrix = user_matrix.split('[').join('');
@@ -101,9 +99,7 @@ function work_ace(){
     }else if(task_number==2){
 
         var user_answer = execute_ace();
-        console.log(user_answer);
         var user_answer_arr = user_answer.split(';');
-        console.log(user_answer_arr);
 
         var user_u = user_answer_arr[0].split('=')[1];
         user_u = user_u.split('[').join('');
@@ -125,9 +121,7 @@ function work_ace(){
     }else if((task_number==3)||(task_number==4)){
 
         var user_answer = execute_ace();
-        console.log(user_answer);
         var user_answer_arr = user_answer.split(';');
-        console.log(user_answer_arr);
 
         var user_matrix = user_answer_arr[0].split('=')[1];
         user_matrix = user_matrix.split('[').join('');
@@ -140,7 +134,6 @@ function work_ace(){
         }
     }
 
-    console.log(user_answer);
     return user_answer;
 
 }
@@ -241,8 +234,6 @@ function check_code(){
         }
 
         var res_matrix = results.matrix;
-        console.log(res_matrix);
-        console.log(results.sum);
 
         var lines = iframeDoc.querySelectorAll('tr');
         for(var iii = 0; iii<lines.length;iii++){
@@ -276,7 +267,6 @@ function check_code(){
         var v = abc.v;
         var answer = desicions.column_potentials;
 
-        console.log(desicions.column_potentials);
         var correct = true;
         var cells = iframeDoc.querySelectorAll('td');
         for(var i = 0;i<u.length;i++){
@@ -310,13 +300,11 @@ function check_code(){
             }
         }
         abc.matrix = answer;
-        // console.log(result_potential);
         if (task_number==3) {
             var results = check_matrix(abc.matrix, desicions.matrix_potentials);
         }else{
             var results = check_matrix(abc.matrix, desicions.result_potential.matrix_signs);
         }
-        console.log(results);
 
         var lines = iframeDoc.querySelectorAll('tr');
         for(var iii = 0; iii<lines.length;iii++){
@@ -429,7 +417,6 @@ function try_sigma(user_answer){
     } else if (task_number==4) {
 
         if(typeof user_answer!="undefined"){
-            console.log("enter");
             var abc = user_answer.matrix;
 
             for (i = 0; i < 4; i++){
@@ -439,12 +426,9 @@ function try_sigma(user_answer){
                     if(abc[i*5+j]!=0){
                         if(abc[i*5+j].indexOf('-') + 1){
                             color_edge = '#f00';
-                            console.log("-");
                         } else if (abc[i*5+j].indexOf('+') + 1) {
                             color_edge = '#00f';
-                            console.log("+");
-                        }else {
-                            console.log("a");
+                        }else{
                             color_edge = '#0f0';
                         }
                         label_edge = abc[i*5+j];
@@ -753,31 +737,19 @@ function get_column_potentials(task,route){
 //Сверяет JSONы реального решения и полученного с помощью алгоритма
 function check_desicion(real_result, user_result){
 
-    console.log("got: "+real_result.matrix);
-    console.log("typed: "+user_result.matrix);
-
 	if(check_matrix(real_result.matrix,user_result.matrix).length==0){
-		console.log("Matrix gone");
-		console.log("<br>");
 		if(real_result.sum==user_result.sum){
-			console.log("Sum also gone!");
-			console.log("<br>");
             var result = {
                 "matrix": 0,
                 "sum": 0
             }
 		} else{
-			console.log("Sum not gone!");
-			console.log("<br>");
             var result = {
                 "matrix": 0,
                 "sum": 1
             }
 		}
 	} else{
-		console.log("Matrix not gone!");
-	    console.log("<br>");
-		console.log(check_matrix(real_result.matrix,user_result.matrix));
         var result = {
             "matrix": check_matrix(real_result.matrix,user_result.matrix),
             "sum": 1
