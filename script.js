@@ -327,7 +327,7 @@ function check_code(){
     }
 
 }
-document.querySelector('.drawcode').addEventListener('click',draw_ace);
+// document.querySelector('.drawcode').addEventListener('click',draw_ace);
 // document.querySelector('.drawcode').addEventListener('click',try_sigma);
 document.querySelector('.sendcode').addEventListener('click',check_code);
 
@@ -594,6 +594,10 @@ function execute_ace(){
 //Возвращает номер задания из адресной строки
 function get_task_number() {
   var index = window.location.hash;
+  if (index=='') {
+      index="#1";
+      window.location.hash = index;
+  }
   task_number = parseInt(index.replace('#',''));
   return task_number;
 }

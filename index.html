@@ -47,13 +47,11 @@
                 <div class = "editor" id = "editor"></div>
                 <div class = "codebuttons">
                     <button class = "clearcode" value = "" id = "clearcode">Очистить поле</button>
-                    <button class = "drawcode" value = "" id = "drawcode">Отрисовать</button>
+                    <!-- <button class = "drawcode" value = "" id = "drawcode">Отрисовать</button> -->
                     <button class = "sendcode" value = "" id = "sendcode">Проверить</button>
                 </div>
             </div>
             <div class = "grapharea">
-                <!-- <iframe id = "graphframe" src="javascript:''" >
-                </iframe> -->
                 <div id = "container"></div>
             </div>
             <button class = "prevtask" id = "prevtask">Назад</button>
@@ -74,6 +72,7 @@
             var editor = ace.edit("editor");
             editor.setTheme("ace/theme/dawn");
             editor.getSession().setMode("ace/mode/javascript");
+            document.getElementById('editor').style.fontSize='14px';
         </script>
         <script src="resources.json"></script>
         <script src="script.js" type="text/javascript" charset="utf-8"></script>
